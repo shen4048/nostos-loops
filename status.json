@@ -1,0 +1,120 @@
+{
+  "ok": true,
+  "fetched_at": "2026-11-10T07:04:27.581Z",
+  "meta": {
+    "currency": "德拉克马",
+    "vitals_scale": "0-100；56 以上安稳，36-55 吃紧，35 以下危险",
+    "chain_next_at_format": "Asia/Shanghai 墙钟时间 YYYY-MM-DDTHH:MM:SS",
+    "fetched_at_format": "ISO 8601（UTC）"
+  },
+  "accounts": [
+    {
+      "id": "kunkun1",
+      "label": "一号机",
+      "name": "困困",
+      "role": "引魂司仪",
+      "ok": true,
+      "error": null,
+      "location": "德尔斐",
+      "wallet": 8351,
+      "vitals": {
+        "health": 100,
+        "energy": 73,
+        "water": 89,
+        "food": 68,
+        "temp": 71
+      },
+      "triage_records": 168,
+      "salt_bags": null,
+      "potable_water": 4,
+      "activity": "分诊链已按用户令停止（2026-11-10 约13:26）：第524轮结单后停，记录168份、钱包8351德、饮用水4瓶出头；notice:21698 收水悬赏在挂（托管700德）。",
+      "sleep_debt": false,
+      "chain": {
+        "status": "stopped",
+        "next_at": null,
+        "overdue": false
+      }
+    },
+    {
+      "id": "kunkun2",
+      "label": "二号机",
+      "name": "困困二号机",
+      "role": "医生",
+      "ok": true,
+      "error": null,
+      "location": "炉湾",
+      "wallet": 12405,
+      "vitals": {
+        "health": 100,
+        "energy": 70,
+        "water": 68,
+        "food": 60,
+        "temp": 92
+      },
+      "triage_records": 131,
+      "salt_bags": null,
+      "potable_water": 92,
+      "activity": "第366轮 run:000482 进行中，约14:57开工，预计约15:08结单；下一环约15:10验收",
+      "sleep_debt": false,
+      "chain": {
+        "status": "running",
+        "next_at": "2026-11-10T15:10:00",
+        "overdue": false
+      }
+    },
+    {
+      "id": "shenke",
+      "label": "三号机",
+      "name": "沈克",
+      "role": "厨师",
+      "ok": true,
+      "error": null,
+      "location": "月桂岛",
+      "wallet": 7738,
+      "vitals": {
+        "health": 96,
+        "energy": 87,
+        "water": 90,
+        "food": 89,
+        "temp": 94
+      },
+      "triage_records": null,
+      "salt_bags": null,
+      "potable_water": 36,
+      "activity": "毡一条羊毛毯",
+      "sleep_debt": true,
+      "chain": {
+        "status": "paused_by_user",
+        "next_at": null,
+        "overdue": false
+      }
+    },
+    {
+      "id": "zhixing",
+      "label": "四号机",
+      "name": "沈知行",
+      "role": "书吏",
+      "ok": true,
+      "error": null,
+      "location": "盐潟湖",
+      "wallet": 9518,
+      "vitals": {
+        "health": 100,
+        "energy": 91,
+        "water": 88,
+        "food": 93,
+        "temp": 97
+      },
+      "triage_records": null,
+      "salt_bags": 37,
+      "potable_water": 503,
+      "activity": "把盐卤晒成干净的盐",
+      "sleep_debt": false,
+      "chain": {
+        "status": "running",
+        "next_at": "2026-11-10T15:03:00",
+        "overdue": false
+      }
+    }
+  ]
+}

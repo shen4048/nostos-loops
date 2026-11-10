@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>雾潮调度台</title>
+<style>
+  :root {
+    color-scheme: light;
+    --fog: #dfe5e4;        /* 海雾 */
+    --paper: #edf1ef;      /* 行带底 */
+    --ink: #17303a;        /* 深海靛 */
+    --dim: #5c7078;
+    --line: #b9c6c6;
+    --sea: #2f6f7e;        /* 安稳水位 */
+    --laurel: #557a45;     /* 链在跑 */
+    --amber: #a86a12;      /* 吃紧 */
+    --cinnabar: #a8322a;   /* 危险 */
+    --tube: #cdd7d6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --fog: #0f1f26;
+      --paper: #142a32;
+      --ink: #dde8e6;
+      --dim: #8aa0a6;
+      --line: #27424b;
+      --sea: #4fa3b3;
+      --laurel: #8fbf78;
+      --amber: #e0a542;
+      --cinnabar: #ec7468;
+      --tube: #1d3740;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--fog);
+    color: var(--ink);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    font-variant-numeric: tabular-nums;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 20px 16px 40px; }
+  .serif { font-family: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", STSong, SimSun, serif; }
+
+  header { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+  h1 { font-size: 30px; line-height: 1.15; margin: 0; font-weight: 700; letter-spacing: 0.06em; }
+  .read { color: var(--dim); font-size: 13px; margin: 4px 0 0; }
+  button.refresh {
+    font: inherit; font-size: 14px; color: var(--ink); background: transparent;
+    border: 1px solid var(--ink); border-radius: 2px; padding: 8px 14px; min-height: 40px; cursor: pointer;
+  }
+  button.refresh:active { background: var(--ink); color: var(--fog); }
+  button.refresh:disabled { opacity: .5; cursor: default; }
+  :focus-visible { outline: 2px solid var(--sea); outline-offset: 2px; }
+
+  .sample {
+    margin: 14px 0 0; padding: 8px 12px; font-size: 13px;
+    border: 1px dashed var(--amber); color: var(--amber);
+  }
+
+  .totals { display: grid; grid-template-columns: repeat(3, 1fr); margin: 20px 0 0; border-top: 2px solid var(--ink); border-bottom: 1px solid var(--line); }
+  .totals div { padding: 12px 0 10px; }
+  .totals div + div { padding-left: 12px; border-left: 1px solid var(--line); }
+  .totals b { display: block; font-size: 22px; line-height: 1.2; font-weight: 700; }
+  .totals span { color: var(--dim); font-size: 13px; }
+
+  .alerts { list-style: none; margin: 12px 0 0; padding: 0; }
+  .alerts li { padding: 6px 0 6px 12px; border-left: 3px solid var(--cinnabar); margin-bottom: 6px; font-size: 14px; }
+  .alerts li.warn { border-left-color: var(--amber); }
+
+  .acct { padding: 20px 0 18px; border-bottom: 1px solid var(--line); }
+  .acct-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .acct h2 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: .03em; }
+  .acct h2 small { font-family: "PingFang SC", system-ui, sans-serif; font-weight: 400; font-size: 13px; color: var(--dim); margin-left: 8px; letter-spacing: 0; }
+  .chain { font-size: 13px; text-align: right; white-space: nowrap; }
+  .chain i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 0; background: var(--dim); }
+  .chain.running i { background: var(--laurel); }
+  .chain.overdue i { background: var(--cinnabar); }
+  .chain.overdue { color: var(--cinnabar); }
+  .chain.paused i { background: transparent; border: 2px solid var(--amber); }
+  .where { margin: 2px 0 0; color: var(--dim); font-size: 14px; }
+  .where b { color: var(--ink); font-weight: 600; }
+
+  /* 体征水位：五根量管，36 和 56 两道刻线 */
+  .gauges { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 14px 0 4px; }
+  .gauge { text-align: center; }
+  .tube { position: relative; height: 64px; background: var(--tube); overflow: hidden; }
+  .tube .fill { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: var(--sea); transition: height .7s cubic-bezier(.2,.7,.2,1); }
+  .tube.tight .fill { background: var(--amber); }
+  .tube.danger .fill { background: var(--cinnabar); }
+  .tube::before, .tube::after { content: ""; position: absolute; left: 0; right: 0; height: 1px; background: var(--fog); z-index: 1; opacity: .9; }
+  .tube::before { bottom: 36%; }
+  .tube::after { bottom: 56%; }
+  .gauge .num { display: block; margin-top: 5px; font-size: 16px; font-weight: 700; line-height: 1.1; }
+  .gauge .num.tight { color: var(--amber); }
+  .gauge .num.danger { color: var(--cinnabar); }
+  .gauge .lab { font-size: 12px; color: var(--dim); }
+  .novitals { margin: 14px 0 4px; padding: 14px 12px; background: var(--tube); font-size: 14px; color: var(--dim); }
+
+  .doing { margin: 10px 0 0; font-size: 14px; }
+  .doing .tag { color: var(--dim); }
+  .stock { margin: 4px 0 0; font-size: 13px; color: var(--dim); }
+  .stock b { color: var(--ink); font-weight: 600; }
+  .note { margin: 8px 0 0; font-size: 13px; color: var(--amber); }
+  .err { margin: 10px 0 0; font-size: 14px; color: var(--cinnabar); }
+
+  .legend { margin: 16px 0 0; font-size: 12px; color: var(--dim); }
+  footer { margin-top: 22px; font-size: 13px; color: var(--dim); }
+  footer a { color: var(--sea); }
+  @media (prefers-reduced-motion: reduce) { .tube .fill { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1 class="serif">雾潮调度台</h1>
+      <p class="read" id="read">正在读取…</p>
+    </div>
+    <button class="refresh" id="refresh" type="button">重新读取</button>
+  </header>
+
+  <p class="sample" id="sample" hidden>现在显示的是示例数据，不是实况。仓库里放一份 status.json 之后，这里就会换成真数。</p>
+
+  <section class="totals" aria-label="四个号合计">
+    <div><b id="t-wallet">—</b><span>钱包合计（德）</span></div>
+    <div><b id="t-triage">—</b><span>分诊合计（份）</span></div>
+    <div><b id="t-chain">—</b><span>链在跑</span></div>
+  </section>
+  <ul class="alerts" id="alerts" aria-label="要留意的事"></ul>
+
+  <main id="list"></main>
+
+  <p class="legend">量管上的两道刻线是 36 和 56：56 以上安稳，36 到 55 吃紧，35 以下危险。数量来自游戏里的约数，没给数字的显示为"—"，不是 0。</p>
+  <footer>
+    这一页只看不动。启停链、行商买东西，去
+    <a href="https://muse.ai/space/wu-chao-xun-huan-kong-zhi-tai">Muse 里的控制台</a>操作。
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // 没有 status.json 时用的示例。结构和调度台 getStatus 的出参一致。
+  var SAMPLE = {
+    ok: true,
+    fetched_at: new Date().toISOString(),
+    accounts: [
+      { id: "kunkun1", label: "一号机", name: "困困", role: "引魂司仪", ok: true, error: null,
+        location: "月桂林", wallet: 4210, vitals: { health: 97, energy: 74, water: 81, food: 66, temp: 88 },
+        triage_records: 121, salt_bags: null, potable_water: 498, activity: "野外分诊", sleep_debt: false,
+        chain: { status: "running", next_at: "2026-11-10T13:40:00", overdue: true } },
+      { id: "kunkun2", label: "二号机", name: "困困二号机", role: "医生", ok: true, error: null,
+        location: "德尔斐", wallet: 9630, vitals: { health: 100, energy: 52, water: 44, food: 71, temp: 90 },
+        triage_records: 203, salt_bags: null, potable_water: 37, activity: "野外分诊", sleep_debt: true,
+        chain: { status: "running", next_at: "2026-11-10T13:52:00", overdue: false } },
+      { id: "shenke", label: "三号机", name: "沈克", role: "厨师", ok: true, error: null,
+        location: "月桂岛", wallet: 7738, vitals: { health: 96, energy: 83, water: 78, food: 80, temp: 91 },
+        triage_records: 14, salt_bags: null, potable_water: 21, activity: "毡一条羊毛毯", sleep_debt: false,
+        chain: { status: "paused_by_user", next_at: null, overdue: false } },
+      { id: "zhixing", label: "四号机", name: "沈知行", role: "书吏", ok: true, error: null,
+        location: "迈锡尼", wallet: 1903, vitals: { health: 88, energy: 61, water: 33, food: 58, temp: 79 },
+        triage_records: null, salt_bags: 37, potable_water: 6, activity: null, sleep_debt: false,
+        chain: { status: "stopped", next_at: null, overdue: false } }
+    ]
+  };
+
+  var VITALS = [["health", "健康"], ["energy", "精力"], ["water", "水分"], ["food", "饱腹"], ["temp", "体温"]];
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined && text !== null) n.textContent = text;
+    return n;
+  }
+  function num(v) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("zh-CN") : "—"; }
+  function zone(v) { return v < 36 ? "danger" : v < 56 ? "tight" : ""; }
+  function hhmm(at) {
+    var m = /T(\d{2}:\d{2})/.exec(at || "");
+    return m ? m[1] : null;
+  }
+
+  function chainNode(a) {
+    var c = a.chain || { status: "stopped" };
+    var box = el("div", "chain");
+    box.appendChild(el("i"));
+    var text;
+    if (c.status === "running") {
+      var t = hhmm(c.next_at);
+      if (c.overdue) { box.className += " overdue"; text = "下一环 " + (t || "—") + " 已过期"; }
+      else { box.className += " running"; text = "在跑，下一环 " + (t || "—"); }
+    } else if (c.status === "paused_by_user") {
+      box.className += " paused"; text = "你叫停的";
+    } else { text = "链停着"; }
+    box.appendChild(document.createTextNode(text));
+    return box;
+  }
+
+  function gaugesNode(v) {
+    if (!v) return el("div", "novitals", "体征没读到。");
+    var g = el("div", "gauges");
+    VITALS.forEach(function (pair) {
+      var val = v[pair[0]];
+      var z = typeof val === "number" ? zone(val) : "";
+      var cell = el("div", "gauge");
+      var tube = el("div", "tube" + (z ? " " + z : ""));
+      tube.setAttribute("role", "img");
+      tube.setAttribute("aria-label", pair[1] + " " + num(val) + (z === "danger" ? "，危险" : z === "tight" ? "，吃紧" : ""));
+      var fill = el("div", "fill");
+      fill.dataset.h = typeof val === "number" ? Math.max(0, Math.min(100, val)) : 0;
+      tube.appendChild(fill);
+      cell.appendChild(tube);
+      cell.appendChild(el("span", "num" + (z ? " " + z : ""), num(val)));
+      cell.appendChild(el("span", "lab", pair[1]));
+      g.appendChild(cell);
+    });
+    return g;
+  }
+
+  function accountNode(a) {
+    var s = el("section", "acct");
+    var head = el("div", "acct-head");
+    var h = el("h2", "serif", a.name || a.id);
+    h.appendChild(el("small", null, [a.label, a.role].filter(Boolean).join("，")));
+    head.appendChild(h);
+    head.appendChild(chainNode(a));
+    s.appendChild(head);
+
+    if (a.ok === false) {
+      s.appendChild(el("p", "err", "这个号没读到：" + (a.error || "原因不明") + "。先去 Muse 里看连接。"));
+      return s;
+    }
+
+    var where = el("p", "where");
+    where.appendChild(document.createTextNode("在 "));
+    where.appendChild(el("b", null, a.location || "—"));
+    where.appendChild(document.createTextNode("，钱包 "));
+    where.appendChild(el("b", null, num(a.wallet)));
+    where.appendChild(document.createTextNode(" 德"));
+    s.appendChild(where);
+
+    s.appendChild(gaugesNode(a.vitals));
+
+    var doing = el("p", "doing");
+    doing.appendChild(el("span", "tag", "手上："));
+    doing.appendChild(document.createTextNode(a.activity || "空着"));
+    s.appendChild(doing);
+
+    var stock = el("p", "stock");
+    var parts = [["分诊记录", a.triage_records, "份"], ["饮用水", a.potable_water, "瓶"]];
+    if (a.id === "zhixing") parts.push(["食盐", a.salt_bags, "袋"]);
+    parts.forEach(function (p, i) {
+      if (i) stock.appendChild(document.createTextNode("　"));
+      stock.appendChild(document.createTextNode(p[0] + " "));
+      stock.appendChild(el("b", null, num(p[1])));
+      stock.appendChild(document.createTextNode(" " + p[2]));
+    });
+    s.appendChild(stock);
+
+    if (a.sleep_debt) s.appendChild(el("p", "note", "有睡眠债，该先睡。"));
+    if (a.chain && a.chain.status === "paused_by_user") {
+      s.appendChild(el("p", "note", "这条链要单独恢复，动之前先告诉沈克。"));
+    }
+    return s;
+  }
+
+  function alertsFor(accounts) {
+    var out = [];
+    accounts.forEach(function (a) {
+      var who = a.name || a.label;
+      if (a.ok === false) { out.push(["danger", who + " 没读到"]); return; }
+      if (a.chain && a.chain.status === "running" && a.chain.overdue) {
+        out.push(["danger", who + "的下一环过期 20 分钟以上，可能断链"]);
+      }
+      if (a.vitals) {
+        VITALS.forEach(function (p) {
+          var v = a.vitals[p[0]];
+          if (typeof v !== "number") return;
+          if (v < 36) out.push(["danger", who + " " + p[1] + " " + v + "，危险"]);
+          else if (v < 56) out.push(["warn", who + " " + p[1] + " " + v + "，吃紧"]);
+        });
+      }
+      if (a.sleep_debt) out.push(["warn", who + " 有睡眠债"]);
+    });
+    out.sort(function (x, y) { return (x[0] === "danger" ? 0 : 1) - (y[0] === "danger" ? 0 : 1); });
+    return out;
+  }
+
+  function render(data, isSample) {
+    var accounts = Array.isArray(data.accounts) ? data.accounts : [];
+    document.getElementById("sample").hidden = !isSample;
+
+    var when = data.fetched_at ? new Date(data.fetched_at) : null;
+    document.getElementById("read").textContent = when && !isNaN(when)
+      ? "读取于 " + when.toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })
+      : "读取时间不明";
+
+    var wallet = 0, walletSeen = false, triage = 0, triageSeen = false, running = 0;
+    accounts.forEach(function (a) {
+      if (typeof a.wallet === "number") { wallet += a.wallet; walletSeen = true; }
+      if (typeof a.triage_records === "number") { triage += a.triage_records; triageSeen = true; }
+      if (a.chain && a.chain.status === "running") running += 1;
+    });
+    document.getElementById("t-wallet").textContent = walletSeen ? num(wallet) : "—";
+    document.getElementById("t-triage").textContent = triageSeen ? num(triage) : "—";
+    document.getElementById("t-chain").textContent = running + " / " + accounts.length;
+
+    var ul = document.getElementById("alerts");
+    ul.textContent = "";
+    alertsFor(accounts).forEach(function (a) {
+      ul.appendChild(el("li", a[0] === "warn" ? "warn" : "", a[1]));
+    });
+
+    var list = document.getElementById("list");
+    list.textContent = "";
+    if (accounts.length === 0) {
+      list.appendChild(el("p", "err", "status.json 里没有号。检查它是不是调度台 getStatus 的原样输出。"));
+    }
+    accounts.forEach(function (a) { list.appendChild(accountNode(a)); });
+
+    // 水位升起：整页唯一一处动效
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        Array.prototype.forEach.call(document.querySelectorAll(".fill"), function (f) {
+          f.style.height = f.dataset.h + "%";
+        });
+      });
+    });
+  }
+
+  function load() {
+    var btn = document.getElementById("refresh");
+    btn.disabled = true;
+    fetch("status.json?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error("no status.json"); return r.json(); })
+      .then(function (d) { render(d, false); })
+      .catch(function () { SAMPLE.fetched_at = new Date().toISOString(); render(SAMPLE, true); })
+      .then(function () { btn.disabled = false; });
+  }
+
+  document.getElementById("refresh").addEventListener("click", load);
+  load();
+})();
+</script>
+</body>
+</html>
