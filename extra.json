@@ -1,0 +1,790 @@
+{
+  "ok": true,
+  "fetched_at": "2026-11-10T07:51:18.247Z",
+  "note": "只读快照：手动刷新推送，页面数字以控制台实时数据为准。pending 为待确认列表（只看，批准/拒绝只能在 Muse 控制台里点）。",
+  "pending": [
+    {
+      "id": "503025df-1a8a-4086-9df4-a6d35bba09f5",
+      "account": "shenke",
+      "label": "三号机",
+      "name": "沈克",
+      "action": "resumeChain",
+      "summary": "恢复 三号机 沈克 的链",
+      "status": "rejected",
+      "result": "用户在控制台拒绝，未执行。",
+      "created_at": "2026-11-10T06:46:56.657Z",
+      "expires_at": "2026-11-10T07:16:56.657Z"
+    }
+  ],
+  "shortage_overview": [
+    {
+      "id": "kunkun1",
+      "label": "一号机",
+      "name": "困困",
+      "shortage": [
+        {
+          "item_id": "raw_roundwood",
+          "name": "原木",
+          "kind": "consume",
+          "owned": null,
+          "required": 8,
+          "short": null,
+          "unit": "根",
+          "used_by": [
+            "把原木修成方木",
+            "搭一座挡风的小棚"
+          ]
+        },
+        {
+          "item_id": "stone_flake",
+          "name": "石片",
+          "kind": "tool",
+          "owned": 2,
+          "required": 2,
+          "short": 0,
+          "unit": "",
+          "used_by": [
+            "把原木修成方木",
+            "做一副带软垫的夹板"
+          ]
+        },
+        {
+          "item_id": "stone_axe",
+          "name": "石斧",
+          "kind": "tool",
+          "owned": 1,
+          "required": 1,
+          "short": 0,
+          "unit": "",
+          "used_by": [
+            "把原木修成方木"
+          ]
+        },
+        {
+          "item_id": "worked_timber",
+          "name": "方木",
+          "kind": "consume",
+          "owned": 2,
+          "required": 1,
+          "short": 0,
+          "unit": "根",
+          "used_by": [
+            "做一副带软垫的夹板"
+          ]
+        },
+        {
+          "item_id": "utility_rope",
+          "name": "粗绳",
+          "kind": "consume",
+          "owned": 1,
+          "required": 0.5,
+          "short": 0,
+          "unit": "捆",
+          "used_by": [
+            "搭一座挡风的小棚"
+          ]
+        },
+        {
+          "item_id": "clean_cloth",
+          "name": "亚麻布",
+          "kind": "consume",
+          "owned": 1,
+          "required": 0.5,
+          "short": 0,
+          "unit": "幅",
+          "used_by": [
+            "做一副带软垫的夹板"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kunkun2",
+      "label": "二号机",
+      "name": "困困二号机",
+      "shortage": [
+        {
+          "item_id": "raw_roundwood",
+          "name": "原木",
+          "kind": "consume",
+          "owned": 1,
+          "required": 2,
+          "short": 1,
+          "unit": "根",
+          "used_by": [
+            "搭一座挡风的小棚"
+          ]
+        },
+        {
+          "item_id": "raw_fresh_water",
+          "name": "生水",
+          "kind": "consume",
+          "owned": 6,
+          "required": 1,
+          "short": 0,
+          "unit": "瓶",
+          "used_by": [
+            "煮一小锅水，盖好等它冷却"
+          ]
+        },
+        {
+          "item_id": "kindling_bundle",
+          "name": "细树枝",
+          "kind": "consume",
+          "owned": 66,
+          "required": 1,
+          "short": 0,
+          "unit": "束",
+          "used_by": [
+            "点一簇小火"
+          ]
+        },
+        {
+          "item_id": "stone_flake",
+          "name": "石片",
+          "kind": "tool",
+          "owned": 2,
+          "required": 1,
+          "short": 0,
+          "unit": "",
+          "used_by": [
+            "点一簇小火"
+          ]
+        },
+        {
+          "item_id": "hammerstone",
+          "name": "敲击石",
+          "kind": "tool",
+          "owned": 1,
+          "required": 1,
+          "short": 0,
+          "unit": "",
+          "used_by": [
+            "点一簇小火"
+          ]
+        },
+        {
+          "item_id": "dry_tinder",
+          "name": "火绒",
+          "kind": "consume",
+          "owned": 84,
+          "required": 0.5,
+          "short": 0,
+          "unit": "把",
+          "used_by": [
+            "点一簇小火"
+          ]
+        },
+        {
+          "item_id": "utility_rope",
+          "name": "粗绳",
+          "kind": "consume",
+          "owned": 4,
+          "required": 0.5,
+          "short": 0,
+          "unit": "捆",
+          "used_by": [
+            "搭一座挡风的小棚"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "shenke",
+      "label": "三号机",
+      "name": "沈克",
+      "shortage": [
+        {
+          "item_id": "raw_fresh_water",
+          "name": "生水",
+          "kind": "consume",
+          "owned": 25,
+          "required": 6,
+          "short": 0,
+          "unit": "瓶",
+          "used_by": [
+            "沉淀一批浑水"
+          ]
+        },
+        {
+          "item_id": "raw_roundwood",
+          "name": "原木",
+          "kind": "consume",
+          "owned": 46,
+          "required": 2,
+          "short": 0,
+          "unit": "根",
+          "used_by": [
+            "搭一座挡风的小棚"
+          ]
+        },
+        {
+          "item_id": "utility_rope",
+          "name": "粗绳",
+          "kind": "consume",
+          "owned": 9,
+          "required": 0.5,
+          "short": 0,
+          "unit": "捆",
+          "used_by": [
+            "搭一座挡风的小棚"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zhixing",
+      "label": "四号机",
+      "name": "沈知行",
+      "shortage": []
+    }
+  ],
+  "accounts": {
+    "kunkun1": {
+      "market": {
+        "available": true,
+        "currency": "德拉克马",
+        "refresh_note": "常备约4小时8分54秒后刷新 · 行商约1小时8分54秒后刷新",
+        "buy": [
+          {
+            "group": "集市常备",
+            "id": "potable_water",
+            "name": "饮用水",
+            "price": 11,
+            "quota": 4,
+            "unit": "瓶"
+          },
+          {
+            "group": "集市常备",
+            "id": "travel_ration",
+            "name": "远行口粮",
+            "price": 24,
+            "quota": 2,
+            "unit": "份"
+          },
+          {
+            "group": "集市常备",
+            "id": "medicinal_herb_harvest",
+            "name": "药草",
+            "price": 28,
+            "quota": 6,
+            "unit": "把"
+          },
+          {
+            "group": "集市常备",
+            "id": "bee_colony",
+            "name": "蜂群",
+            "price": 8,
+            "quota": 6,
+            "unit": "箱"
+          },
+          {
+            "group": "行商货架",
+            "id": "healing_salve",
+            "name": "护创药膏",
+            "price": 29,
+            "quota": 4,
+            "unit": "罐"
+          },
+          {
+            "group": "行商货架",
+            "id": "survey_chain",
+            "name": "测距绳",
+            "price": 847,
+            "quota": 1,
+            "unit": "条"
+          },
+          {
+            "group": "行商货架",
+            "id": "tanned_leather",
+            "name": "皮革",
+            "price": 107,
+            "quota": 4,
+            "unit": "张"
+          },
+          {
+            "group": "行商货架",
+            "id": "fitted_pack_frame",
+            "name": "背架",
+            "price": 271,
+            "quota": 1,
+            "unit": "副"
+          }
+        ],
+        "sell_triage_record": {
+          "id": "triage_record",
+          "name": "分诊记录",
+          "owned": "168份",
+          "next_price": 90,
+          "total_price": 9612
+        },
+        "sell_note": "能卖全量清单在控制台里看（种类很多）；这里只单列分诊记录的集市收购价。"
+      },
+      "nearby": {
+        "sites": [
+          {
+            "id": "site_delphi_bee_swarms",
+            "name": "德尔斐崖花蜂群附近",
+            "resource_id": "bee_colony",
+            "resource_name": "蜂群",
+            "abundance": "很充足",
+            "done": false,
+            "eta_text": "取1约6分钟"
+          },
+          {
+            "id": "site_delphi_medicinal_slope",
+            "name": "德尔斐药草山坡附近",
+            "resource_id": "medicinal_herb_harvest",
+            "resource_name": "药草",
+            "abundance": "很充足",
+            "done": true,
+            "eta_text": "取1约14分15秒"
+          },
+          {
+            "id": "site_delphi_spring",
+            "name": "德尔斐石缝泉附近",
+            "resource_id": "raw_fresh_water",
+            "resource_name": "生水",
+            "abundance": "很充足",
+            "done": false,
+            "eta_text": "取1约4分53秒"
+          }
+        ],
+        "processes": []
+      }
+    },
+    "kunkun2": {
+      "market": {
+        "available": true,
+        "currency": "德拉克马",
+        "refresh_note": "常备约4小时8分55秒后刷新 · 行商约1小时8分55秒后刷新",
+        "buy": [
+          {
+            "group": "集市常备",
+            "id": "potable_water",
+            "name": "饮用水",
+            "price": 11,
+            "quota": 4,
+            "unit": "瓶"
+          },
+          {
+            "group": "集市常备",
+            "id": "travel_ration",
+            "name": "远行口粮",
+            "price": 24,
+            "quota": 2,
+            "unit": "份"
+          },
+          {
+            "group": "集市常备",
+            "id": "raw_roundwood",
+            "name": "原木",
+            "price": 8,
+            "quota": 6,
+            "unit": "根"
+          },
+          {
+            "group": "集市常备",
+            "id": "flint_nodule",
+            "name": "燧石",
+            "price": 2,
+            "quota": 6,
+            "unit": "块"
+          },
+          {
+            "group": "集市常备",
+            "id": "edible_forage",
+            "name": "野菜野果",
+            "price": 4,
+            "quota": 6,
+            "unit": "份"
+          },
+          {
+            "group": "集市常备",
+            "id": "wild_fiber_stalk",
+            "name": "长纤维草",
+            "price": 3,
+            "quota": 6,
+            "unit": "把"
+          },
+          {
+            "group": "行商货架",
+            "id": "clean_cloth",
+            "name": "亚麻布",
+            "price": 179,
+            "quota": 4,
+            "unit": "幅"
+          },
+          {
+            "group": "行商货架",
+            "id": "roasted_iron_ore",
+            "name": "焙烧铁矿",
+            "price": 142,
+            "quota": 4,
+            "unit": "筐"
+          },
+          {
+            "group": "行商货架",
+            "id": "sealed_grain_jar",
+            "name": "防潮粮罐",
+            "price": 288,
+            "quota": 1,
+            "unit": "只"
+          },
+          {
+            "group": "行商货架",
+            "id": "tempered_clay_body",
+            "name": "陶泥",
+            "price": 25,
+            "quota": 4,
+            "unit": "团"
+          }
+        ],
+        "sell_triage_record": {
+          "id": "triage_record",
+          "name": "分诊记录",
+          "owned": "132份",
+          "next_price": 81,
+          "total_price": 7193
+        },
+        "sell_note": "能卖全量清单在控制台里看（种类很多）；这里只单列分诊记录的集市收购价。"
+      },
+      "nearby": {
+        "sites": [
+          {
+            "id": "site_hearthbay_bast_margin",
+            "name": "炉湾沟缘韧皮草带附近",
+            "resource_id": "wild_fiber_stalk",
+            "resource_name": "长纤维草",
+            "abundance": "很充足",
+            "done": false,
+            "eta_text": "取1约4分53秒"
+          },
+          {
+            "id": "site_hearthbay_clay_bank",
+            "name": "炉湾近岸陶土层附近",
+            "resource_id": "raw_clay",
+            "resource_name": "黏土",
+            "abundance": "很充足",
+            "done": false,
+            "eta_text": "取1约8分15秒"
+          },
+          {
+            "id": "site_hearthbay_flint_shingle",
+            "name": "炉湾旧河砾里的燧石滩附近",
+            "resource_id": "flint_nodule",
+            "resource_name": "燧石",
+            "abundance": "很充足",
+            "done": false,
+            "eta_text": "取1约4分53秒"
+          },
+          {
+            "id": "site_hearthbay_kitchen_margin",
+            "name": "炉湾灶屋后的野菜果草地附近",
+            "resource_id": "edible_forage",
+            "resource_name": "野菜野果",
+            "abundance": "很充足",
+            "done": false,
+            "eta_text": "取1约4分26秒"
+          },
+          {
+            "id": "site_hearthbay_spring",
+            "name": "炉湾缓流泉眼附近",
+            "resource_id": "raw_fresh_water",
+            "resource_name": "生水",
+            "abundance": "很充足",
+            "done": false,
+            "eta_text": "取1约4分53秒"
+          },
+          {
+            "id": "site_hearthbay_stormfall_wood",
+            "name": "炉湾风倒枝木带附近",
+            "resource_id": "raw_roundwood",
+            "resource_name": "原木",
+            "abundance": "很充足",
+            "done": false,
+            "eta_text": "取1约8分15秒"
+          }
+        ],
+        "processes": []
+      }
+    },
+    "shenke": {
+      "market": {
+        "available": true,
+        "currency": "德拉克马",
+        "refresh_note": "常备约4小时8分56秒后刷新 · 行商约1小时8分56秒后刷新",
+        "buy": [
+          {
+            "group": "集市常备",
+            "id": "potable_water",
+            "name": "饮用水",
+            "price": 11,
+            "quota": 4,
+            "unit": "瓶"
+          },
+          {
+            "group": "集市常备",
+            "id": "travel_ration",
+            "name": "远行口粮",
+            "price": 24,
+            "quota": 2,
+            "unit": "份"
+          },
+          {
+            "group": "集市常备",
+            "id": "raw_roundwood",
+            "name": "原木",
+            "price": 8,
+            "quota": 6,
+            "unit": "根"
+          },
+          {
+            "group": "集市常备",
+            "id": "flint_nodule",
+            "name": "燧石",
+            "price": 2,
+            "quota": 6,
+            "unit": "块"
+          },
+          {
+            "group": "集市常备",
+            "id": "edible_forage",
+            "name": "野菜野果",
+            "price": 4,
+            "quota": 6,
+            "unit": "份"
+          },
+          {
+            "group": "集市常备",
+            "id": "wild_fiber_stalk",
+            "name": "长纤维草",
+            "price": 3,
+            "quota": 6,
+            "unit": "把"
+          },
+          {
+            "group": "集市常备",
+            "id": "sea_transport_slot",
+            "name": "海运舱位",
+            "price": 5,
+            "quota": 4,
+            "unit": "席"
+          },
+          {
+            "group": "行商货架",
+            "id": "olive_harvest",
+            "name": "橄榄",
+            "price": 23,
+            "quota": 4,
+            "unit": "篮"
+          },
+          {
+            "group": "行商货架",
+            "id": "clean_dressing_pack",
+            "name": "消毒敷料",
+            "price": 76,
+            "quota": 1,
+            "unit": "包"
+          },
+          {
+            "group": "行商货架",
+            "id": "quicklime",
+            "name": "生石灰",
+            "price": 69,
+            "quota": 4,
+            "unit": "袋"
+          },
+          {
+            "group": "行商货架",
+            "id": "grape_harvest",
+            "name": "葡萄",
+            "price": 41,
+            "quota": 4,
+            "unit": "篮"
+          }
+        ],
+        "sell_triage_record": null,
+        "sell_note": "能卖全量清单在控制台里看（种类很多）。"
+      },
+      "nearby": {
+        "sites": [
+          {
+            "id": "site_laurel_isle_bast_patch",
+            "name": "月桂岛韧皮纤维坡附近",
+            "resource_id": "wild_fiber_stalk",
+            "resource_name": "长纤维草",
+            "abundance": "很充足",
+            "done": false,
+            "eta_text": "取1约4分53秒"
+          },
+          {
+            "id": "site_laurel_isle_kitchen_garden_margin",
+            "name": "月桂岛菜圃外缘附近",
+            "resource_id": "edible_forage",
+            "resource_name": "野菜野果",
+            "abundance": "很充足",
+            "done": false,
+            "eta_text": "取1约4分26秒"
+          },
+          {
+            "id": "site_laurel_isle_managed_woodlot",
+            "name": "月桂岛轮伐林地附近",
+            "resource_id": "raw_roundwood",
+            "resource_name": "原木",
+            "abundance": "很充足",
+            "done": false,
+            "eta_text": "取1约8分15秒"
+          },
+          {
+            "id": "site_laurel_isle_pebble_flint",
+            "name": "月桂岛北滩燧石砾附近",
+            "resource_id": "flint_nodule",
+            "resource_name": "燧石",
+            "abundance": "很充足",
+            "done": false,
+            "eta_text": "取1约4分53秒"
+          },
+          {
+            "id": "site_laurel_isle_spring",
+            "name": "月桂岛林缘泉眼附近",
+            "resource_id": "raw_fresh_water",
+            "resource_name": "生水",
+            "abundance": "很充足",
+            "done": false,
+            "eta_text": "取1约4分53秒"
+          }
+        ],
+        "processes": [
+          {
+            "id": "water_boil_and_cool",
+            "name": "煮一小锅水，盖好等它冷却",
+            "done": true,
+            "can_start": true,
+            "blocked_reason": null,
+            "duration_text": "约3分钟",
+            "wait_text": "约9分钟",
+            "failure_rate": 6,
+            "inputs": [
+              {
+                "item_id": "raw_fresh_water",
+                "name": "生水",
+                "kind": "consume",
+                "owned": 25,
+                "qty": 1,
+                "qty_text": "1瓶多",
+                "short": 0,
+                "unit": "瓶"
+              }
+            ]
+          },
+          {
+            "id": "building_raise_emergency_lean_to",
+            "name": "搭一座挡风的小棚",
+            "done": false,
+            "can_start": true,
+            "blocked_reason": null,
+            "duration_text": "约21分钟",
+            "wait_text": null,
+            "failure_rate": 4,
+            "inputs": [
+              {
+                "item_id": "raw_roundwood",
+                "name": "原木",
+                "kind": "consume",
+                "owned": 46,
+                "qty": 2,
+                "qty_text": "2根",
+                "short": 0,
+                "unit": "根"
+              },
+              {
+                "item_id": "utility_rope",
+                "name": "粗绳",
+                "kind": "consume",
+                "owned": 9,
+                "qty": 0.5,
+                "qty_text": "半捆",
+                "short": 0,
+                "unit": "捆"
+              }
+            ]
+          },
+          {
+            "id": "water_settle_batch",
+            "name": "沉淀一批浑水",
+            "done": false,
+            "can_start": true,
+            "blocked_reason": null,
+            "duration_text": "约1分30秒",
+            "wait_text": "约30分钟",
+            "failure_rate": 11,
+            "inputs": [
+              {
+                "item_id": "raw_fresh_water",
+                "name": "生水",
+                "kind": "consume",
+                "owned": 25,
+                "qty": 6,
+                "qty_text": "6瓶",
+                "short": 0,
+                "unit": "瓶"
+              }
+            ]
+          },
+          {
+            "id": "profession_livelihood_cook",
+            "name": "替公共灶备一轮饭",
+            "done": false,
+            "can_start": true,
+            "blocked_reason": null,
+            "duration_text": "约15分钟",
+            "wait_text": null,
+            "failure_rate": null,
+            "inputs": []
+          }
+        ]
+      }
+    },
+    "zhixing": {
+      "market": {
+        "available": false,
+        "message": "当前地点不在聚落或古城，没有集市和行商货架。",
+        "buy": [],
+        "sell_triage_record": null
+      },
+      "nearby": {
+        "sites": [
+          {
+            "id": "site_salt_lagoon_brine_pool",
+            "name": "盐潟湖天然卤池附近",
+            "resource_id": "brackish_water",
+            "resource_name": "咸水",
+            "abundance": "很充足",
+            "done": true,
+            "eta_text": "取1约4分53秒"
+          },
+          {
+            "id": "site_salt_lagoon_drinking_jar",
+            "name": "盐潟湖盐工饮水缸附近",
+            "resource_id": "potable_water",
+            "resource_name": "饮用水",
+            "abundance": "很充足",
+            "done": true,
+            "eta_text": "取1约4分53秒"
+          },
+          {
+            "id": "site_salt_lagoon_fish_weir",
+            "name": "盐潟湖鱼梁水域附近",
+            "resource_id": "fresh_catch",
+            "resource_name": "鲜鱼",
+            "abundance": "很充足",
+            "done": false,
+            "eta_text": "取1约6分45秒"
+          }
+        ],
+        "processes": []
+      }
+    }
+  }
+}
