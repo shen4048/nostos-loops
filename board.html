@@ -75,6 +75,22 @@
   .alerts li.warn { border-left-color: var(--amber); }
 
   .acct { padding: 20px 0 18px; border-bottom: 1px solid var(--line); }
+
+  /* 账号卡默认收起：先看基础一行，点开才看个人具体 */
+  details.acct > summary { display: block; list-style: none; cursor: pointer; }
+  details.acct > summary::-webkit-details-marker { display: none; }
+  .basics { margin: 2px 0 0; color: var(--dim); font-size: 13.5px; }
+  .basics b { color: var(--ink); font-weight: 600; }
+  .basics .warnflag { color: var(--cinnabar); font-weight: 600; }
+  .tap { color: var(--dim); font-size: 12.5px; white-space: nowrap; }
+  .tap::before { content: "▸ "; }
+  details.acct[open ] .tap::before { content: "▾ "; }
+
+  /* 横屏/宽屏：两列排，不用上下划拉 */
+  @media (min-width: 760px) {
+    .wrap { max-width: 1120px; padding-top: 14px; }
+    #list { display: grid; grid-template-columns: 1fr 1fr; column-gap: 28px; align-items: start; }
+  }
   .acct-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
   .acct h2 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: .03em; }
   .acct h2 small { font-family: "PingFang SC", system-ui, sans-serif; font-weight: 400; font-size: 13px; color: var(--dim); margin-left: 8px; letter-spacing: 0; }
@@ -246,57 +262,64 @@
   }
 
   function accountNode(a, ex, shItems) {
-    var s = el("section", "acct");
     var head = el("div", "acct-head");
     var h = el("h2", "serif", a.name || a.id);
     h.appendChild(el("small", null, [a.label, a.role].filter(Boolean).join("，")));
     head.appendChild(h);
     head.appendChild(chainNode(a));
-    s.appendChild(head);
 
     if (a.ok === false) {
-      s.appendChild(el("p", "err", "这个号没读到：" + (a.error || "原因不明") + "。先去 Muse 里看连接。"));
-      return s;
+      var es = el("section", "acct");
+      es.appendChild(head);
+      es.appendChild(el("p", "err", "这个号没读到：" + (a.error || "原因不明") + "。先去 Muse 里看连接。"));
+      return es;
     }
 
-    var where = el("p", "where");
-    where.appendChild(document.createTextNode("在 "));
-    where.appendChild(el("b", null, a.location || "—"));
-    where.appendChild(document.createTextNode("，钱包 "));
-    where.appendChild(el("b", null, num(a.wallet)));
-    where.appendChild(document.createTextNode(" 德"));
-    s.appendChild(where);
+    // 默认收起：摘要行只给基础数据，点开才看体征、集市、附近、缺料
+    var s = el("details", "acct");
+    var sum = el("summary");
+    sum.appendChild(head);
+    var basics = el("p", "basics");
+    basics.appendChild(document.createTextNode("在 "));
+    basics.appendChild(el("b", null, a.location || "—"));
+    basics.appendChild(document.createTextNode(" · 钱包 "));
+    basics.appendChild(el("b", null, num(a.wallet)));
+    basics.appendChild(document.createTextNode(" 德 · 分诊 "));
+    basics.appendChild(el("b", null, num(a.triage_records)));
+    basics.appendChild(document.createTextNode(" 份 · 饮用水 "));
+    basics.appendChild(el("b", null, num(a.potable_water)));
+    basics.appendChild(document.createTextNode(" 瓶"));
+    if (a.id === "zhixing") {
+      basics.appendChild(document.createTextNode(" · 食盐 "));
+      basics.appendChild(el("b", null, num(a.salt_bags)));
+      basics.appendChild(document.createTextNode(" 袋"));
+    }
+    if (a.sleep_debt) basics.appendChild(el("span", "warnflag", " · 有睡眠债"));
+    basics.appendChild(document.createTextNode("　"));
+    basics.appendChild(el("span", "tap", "详情"));
+    sum.appendChild(basics);
+    s.appendChild(sum);
 
-    s.appendChild(gaugesNode(a.vitals));
+    var body = el("div");
+    body.appendChild(gaugesNode(a.vitals));
 
     var doing = el("p", "doing");
     doing.appendChild(el("span", "tag", "手上："));
     doing.appendChild(document.createTextNode(a.activity || "空着"));
-    s.appendChild(doing);
+    body.appendChild(doing);
 
-    var stock = el("p", "stock");
-    var parts = [["分诊记录", a.triage_records, "份"], ["饮用水", a.potable_water, "瓶"]];
-    if (a.id === "zhixing") parts.push(["食盐", a.salt_bags, "袋"]);
-    parts.forEach(function (p, i) {
-      if (i) stock.appendChild(document.createTextNode("　"));
-      stock.appendChild(document.createTextNode(p[0] + " "));
-      stock.appendChild(el("b", null, num(p[1])));
-      stock.appendChild(document.createTextNode(" " + p[2]));
-    });
-    s.appendChild(stock);
-
-    if (a.sleep_debt) s.appendChild(el("p", "note", "有睡眠债，该先睡。"));
     if (a.chain && a.chain.status === "paused_by_user") {
-      s.appendChild(el("p", "note", "这条链要单独恢复，动之前先告诉沈克。"));
+      body.appendChild(el("p", "note", "这条链要单独恢复，动之前先告诉沈克。"));
     }
     if (ex) {
       var mk = marketNode(ex.market);
-      if (mk) s.appendChild(mk);
+      if (mk) body.appendChild(mk);
       var nb = nearbyNode(ex.nearby);
-      if (nb) s.appendChild(nb);
+      if (nb) body.appendChild(nb);
     }
     var sh = shortageNode(shItems);
-    if (sh) s.appendChild(sh);
+    if (sh) body.appendChild(sh);
+    s.appendChild(body);
     return s;
   }
 
