@@ -110,6 +110,23 @@
   .note { margin: 8px 0 0; font-size: 13px; color: var(--amber); }
   .err { margin: 10px 0 0; font-size: 14px; color: var(--cinnabar); }
 
+  /* 扩展只读区（extra.json）：待确认、集市、附近、缺料 */
+  .pend { margin: 14px 0 0; padding: 10px 12px; border: 1px solid var(--amber); }
+  .pend h3 { margin: 0 0 4px; font-size: 14px; }
+  .pend p { margin: 2px 0; font-size: 13.5px; }
+  .pend .st-pending { color: var(--amber); font-weight: 700; }
+  .pend .st-done { color: var(--dim); }
+  .sub { margin: 12px 0 0; }
+  .sub h3 { margin: 0 0 4px; font-size: 14px; font-weight: 700; }
+  .sub ul { list-style: none; margin: 0; padding: 0; font-size: 13.5px; }
+  .sub li { padding: 3px 0; border-bottom: 1px dotted var(--line); }
+  .sub li:last-child { border-bottom: none; }
+  .sub .r { float: right; color: var(--dim); margin-left: 8px; }
+  .sub .dimline { color: var(--dim); font-size: 12.5px; }
+  .sub .short { color: var(--cinnabar); font-weight: 600; }
+  .sub details { margin-top: 4px; }
+  .sub summary { cursor: pointer; color: var(--dim); font-size: 13px; padding: 2px 0; }
+
   .legend { margin: 16px 0 0; font-size: 12px; color: var(--dim); }
   footer { margin-top: 22px; font-size: 13px; color: var(--dim); }
   footer a { color: var(--sea); }
@@ -135,7 +152,11 @@
   </section>
   <ul class="alerts" id="alerts" aria-label="要留意的事"></ul>
 
+  <div id="pending"></div>
+
   <main id="list"></main>
+
+  <p class="read" id="read-extra"></p>
 
   <p class="legend">量管上的两道刻线是 36 和 56：56 以上安稳，36 到 55 吃紧，35 以下危险。数量来自游戏里的约数，没给数字的显示为"—"，不是 0。</p>
   <footer>
@@ -224,7 +245,7 @@
     return g;
   }
 
-  function accountNode(a) {
+  function accountNode(a, ex, shItems) {
     var s = el("section", "acct");
     var head = el("div", "acct-head");
     var h = el("h2", "serif", a.name || a.id);
@@ -268,7 +289,126 @@
     if (a.chain && a.chain.status === "paused_by_user") {
       s.appendChild(el("p", "note", "这条链要单独恢复，动之前先告诉沈克。"));
     }
+    if (ex) {
+      var mk = marketNode(ex.market);
+      if (mk) s.appendChild(mk);
+      var nb = nearbyNode(ex.nearby);
+      if (nb) s.appendChild(nb);
+    }
+    var sh = shortageNode(shItems);
+    if (sh) s.appendChild(sh);
     return s;
+  }
+
+  function marketNode(m) {
+    if (!m) return null;
+    var box = el("div", "sub");
+    box.appendChild(el("h3", null, "集市"));
+    if (m.available === false) {
+      box.appendChild(el("p", "dimline", m.message || "当前没有集市。"));
+      return box;
+    }
+    var ul = el("ul");
+    (m.buy || []).forEach(function (b) {
+      var li = el("li");
+      li.appendChild(document.createTextNode(b.name));
+      li.appendChild(el("span", "r", num(b.price) + " 德 · 余 " + num(b.quota) + " " + (b.unit || "")));
+      ul.appendChild(li);
+    });
+    box.appendChild(ul);
+    if (m.sell_triage_record) {
+      var t = m.sell_triage_record;
+      box.appendChild(el("p", "dimline", "分诊记录集市收：下一份 " + num(t.next_price) + " 德（现有 " + (t.owned || "—") + "，全卖约 " + num(t.total_price) + " 德）"));
+    }
+    if (m.refresh_note) box.appendChild(el("p", "dimline", m.refresh_note));
+    return box;
+  }
+
+  function nearbyNode(n) {
+    if (!n) return null;
+    var sites = n.sites || [], procs = n.processes || [];
+    if (!sites.length && !procs.length) return null;
+    var box = el("div", "sub");
+    box.appendChild(el("h3", null, "附近"));
+    var ul = el("ul");
+    sites.forEach(function (s2) {
+      var li = el("li");
+      li.appendChild(document.createTextNode(s2.name + "（" + (s2.resource_name || "") + "）"));
+      li.appendChild(el("span", "r", (s2.eta_text || "") + (s2.done ? " · 做过" : "")));
+      ul.appendChild(li);
+    });
+    procs.forEach(function (p) {
+      var li = el("li");
+      var head = p.name + (p.done ? "（做过）" : "");
+      li.appendChild(document.createTextNode(head));
+      li.appendChild(el("span", "r", (p.duration_text || "") + (typeof p.failure_rate === "number" ? " · 失败 " + p.failure_rate + "%" : "")));
+      ul.appendChild(li);
+      (p.inputs || []).forEach(function (inp) {
+        var sub = el("li", "dimline", "投入：" + inp.name + " " + (inp.qty_text || inp.qty || "") + "（现有 " + (inp.owned === null || inp.owned === undefined ? "—" : inp.owned) + "）" + (inp.short > 0 ? "，差 " + inp.short : ""));
+        ul.appendChild(sub);
+      });
+    });
+    box.appendChild(ul);
+    return box;
+  }
+
+  function shortageNode(items) {
+    if (!items || !items.length) return null;
+    var box = el("div", "sub");
+    box.appendChild(el("h3", null, "缺料"));
+    var ul = el("ul");
+    var okNames = [];
+    items.forEach(function (it) {
+      if (typeof it.short === "number" && it.short > 0) {
+        var li = el("li");
+        li.appendChild(el("span", "short", it.name + " 还差 " + it.short + " " + (it.unit || "")));
+        if (it.used_by && it.used_by.length) li.appendChild(document.createTextNode("（" + it.used_by.join("、") + "要用）"));
+        ul.appendChild(li);
+      } else if (it.short === null || it.short === undefined) {
+        var li2 = el("li");
+        li2.appendChild(document.createTextNode(it.name + " 需要 " + (it.required === null || it.required === undefined ? "—" : it.required) + " " + (it.unit || "") + "（现有量没读到）"));
+        ul.appendChild(li2);
+      } else {
+        okNames.push(it.name);
+      }
+    });
+    box.appendChild(ul);
+    if (okNames.length) {
+      var det = el("details");
+      det.appendChild(el("summary", null, "不缺的 " + okNames.length + " 样"));
+      det.appendChild(el("p", "dimline", okNames.join("、")));
+      box.appendChild(det);
+    }
+    return box;
+  }
+
+  function renderPending(extra) {
+    var host = document.getElementById("pending");
+    host.textContent = "";
+    document.getElementById("read-extra").textContent = "";
+    if (!extra) return;
+    if (extra.fetched_at) {
+      var w = new Date(extra.fetched_at);
+      if (!isNaN(w)) {
+        document.getElementById("read-extra").textContent = "扩展数据（集市、附近、缺料、待确认）读取于 " +
+          w.toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
+      }
+    }
+    var items = Array.isArray(extra.pending) ? extra.pending : [];
+    var box = el("section", "pend");
+    box.appendChild(el("h3", null, "等你点头（只看，批准在 Muse 的控制台里点）"));
+    if (!items.length) {
+      box.appendChild(el("p", "st-done", "暂无待确认。"));
+    }
+    items.forEach(function (p) {
+      var line = el("p");
+      var st = { pending: "等你批", approved: "已批准", rejected: "已拒绝", expired: "已过期" }[p.status] || p.status || "";
+      line.appendChild(el("span", p.status === "pending" ? "st-pending" : "st-done", st + " · "));
+      line.appendChild(document.createTextNode((p.label || "") + " " + (p.name || "") + "：" + (p.summary || "")));
+      if (p.result) line.appendChild(document.createTextNode(" —— " + p.result));
+      box.appendChild(line);
+    });
+    host.appendChild(box);
   }
 
   function alertsFor(accounts) {
@@ -293,9 +433,15 @@
     return out;
   }
 
-  function render(data, isSample) {
+  function render(data, isSample, extra) {
     var accounts = Array.isArray(data.accounts) ? data.accounts : [];
     document.getElementById("sample").hidden = !isSample;
+    renderPending(isSample ? null : extra);
+    var exMap = {}, shMap = {};
+    if (extra && !isSample) {
+      exMap = extra.accounts || {};
+      (extra.shortage_overview || []).forEach(function (row) { shMap[row.id] = row.shortage || []; });
+    }
 
     var when = data.fetched_at ? new Date(data.fetched_at) : null;
     document.getElementById("read").textContent = when && !isNaN(when)
@@ -323,7 +469,7 @@
     if (accounts.length === 0) {
       list.appendChild(el("p", "err", "status.json 里没有号。检查它是不是调度台 getStatus 的原样输出。"));
     }
-    accounts.forEach(function (a) { list.appendChild(accountNode(a)); });
+    accounts.forEach(function (a) { list.appendChild(accountNode(a, exMap[a.id], shMap[a.id])); });
 
     // 水位升起：整页唯一一处动效
     requestAnimationFrame(function () {
@@ -338,10 +484,13 @@
   function load() {
     var btn = document.getElementById("refresh");
     btn.disabled = true;
+    var pExtra = fetch("extra.json?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error("no extra.json"); return r.json(); })
+      .catch(function () { return null; });
     fetch("status.json?t=" + Date.now(), { cache: "no-store" })
       .then(function (r) { if (!r.ok) throw new Error("no status.json"); return r.json(); })
-      .then(function (d) { render(d, false); })
-      .catch(function () { SAMPLE.fetched_at = new Date().toISOString(); render(SAMPLE, true); })
+      .then(function (d) { return pExtra.then(function (ex) { render(d, false, ex); }); })
+      .catch(function () { SAMPLE.fetched_at = new Date().toISOString(); render(SAMPLE, true, null); })
       .then(function () { btn.disabled = false; });
   }
 
