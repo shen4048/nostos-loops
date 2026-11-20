@@ -45,7 +45,7 @@ class Mcp:
         self._post({"jsonrpc": "2.0", "id": self._next(), "method": "initialize",
                     "params": {"protocolVersion": PROTOCOL_VERSION,
                                "capabilities": {},
-                               "clientInfo": {"name": "gh-sale", "version": "1"}}},
+                               "clientInfo": {"name": "gh-tick", "version": "1"}}},
                    expect_reply=True)
         self._post({"jsonrpc": "2.0", "method": "notifications/initialized"},
                    expect_reply=False)
@@ -184,13 +184,20 @@ def main() -> int:
         print(f"sell refused (no market here), day NOT marked sold: {r[:200]}")
         return 0
 
+    # The sell reply itself confirms the trade ("...交到当地人手里，换回N德").
+    amt = re.search(r"换回\s*(\d+(?:\.\d+)?)\s*德", r)
     inv2 = mcp.call("nostos_status", {"view": "inventory"})
-    after = parse_item(inv2, ITEM) if inv2 else None
-    if after is None or after > count - qty + 0.01:
+    after = None
+    if inv2 is not None:
+        after = parse_item(inv2, ITEM)
+        if after is None and ITEM not in inv2:
+            after = 0.0  # sold out: the item line disappears at zero
+    if amt is None and (after is None or after > count - qty + 0.01):
         print(f"sell outcome unclear (before={count}, after={after}): {r[:300]}")
         return 2
+    if after is None:
+        after = count - qty
 
-    amt = re.search(r"(\d+(?:\.\d+)?)\s*德", r)
     print(f"sold {qty} triage records"
           + (f" for {amt.group(1)}" if amt else "")
           + f"; records left: {after}")
