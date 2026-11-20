@@ -1,0 +1,24 @@
+name: kunkun1-triage-tick
+
+# One tick every 5 minutes (GitHub's minimum schedule granularity).
+# Starts in shadow mode: flip the repo variable TICK_SHADOW to 0 to go live.
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: kunkun1-triage-tick
+  cancel-in-progress: false
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run one triage tick
+        env:
+          GALATEA_TOKEN: ${{ secrets.GALATEA_TOKEN }}
+          TICK_SHADOW: ${{ vars.TICK_SHADOW || '1' }}
+        run: python3 tick.py
