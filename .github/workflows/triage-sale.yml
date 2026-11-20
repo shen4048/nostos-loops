@@ -1,0 +1,34 @@
+name: kunkun1-triage-sale
+
+# Sale rounds at 02:41 / 08:41 / 14:41 / 20:41 Asia/Shanghai
+# (= 18:41 / 00:41 / 06:41 / 12:41 UTC), matching the local 6h sale job.
+# Starts in shadow mode: flip the repo variable SALE_SHADOW to 0 to go live.
+on:
+  schedule:
+    - cron: "41 0,6,12,18 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kunkun1-triage-sale
+  cancel-in-progress: false
+
+jobs:
+  sale:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run one triage sale check
+        env:
+          GALATEA_TOKEN: ${{ secrets.GALATEA_TOKEN }}
+          SALE_SHADOW: ${{ vars.SALE_SHADOW || '1' }}
+        run: python3 sale.py
+      - name: Commit sale state if it changed
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add sale_state.json
+          git diff --cached --quiet || (git commit -m "Update triage sale state" && git push)
